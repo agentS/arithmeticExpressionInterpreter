@@ -1,0 +1,29 @@
+EBNF
+----
+
+S := expression eos.
+expression := term { "+" term | "-" term }.
+term := factor { "*" factor | "/" factor }.
+factor := numberLiteral | "(" expression ")".
+numberLiteral := digit+.
+digit := "0" | "1" | ... | "9".
+
+
+attributed grammar
+------------------
+
+S := expression sem println(s"Result = ${result}") endsem
+	eos.
+expression := term sem e = t_0 endsem
+	{ "+" term sem e = e + t_1 endsem
+	| "-" term sem e = e + t_1 endsem
+	}.
+term := factor sem t = f_0 endsem
+	{ "*" factor sem t = t * f_0 endsem
+	| "/" factor sem if f != 0 { t = t / f_1 } else { /* exception handling */ } endsem
+	}.
+factor := numberLiteral sem f = n endsem
+	| "(" expression ")". sem f = e endsem
+numberLiteral := digit+.
+digit := "0" | "1" | ... | "9".
+
